@@ -15,10 +15,13 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
+    "nyc": "^18.0.0",
+    "playwright-test-coverage": "^1.2.12",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.5.4",
-    "vite": "^8.3.2"
+    "vite": "^8.3.2",
+    "vite-plugin-istanbul": "^9.0.1"
   },
   "dependencies": {
     "preline": "^2.1.0",
