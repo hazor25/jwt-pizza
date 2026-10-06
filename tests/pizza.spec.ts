@@ -372,7 +372,7 @@ test('delivery verify shows valid jwt', async ({ page }) => {
   await expect(page.getByText('Here is your JWT Pizza!')).toBeVisible();
 
   await page.getByRole('button', { name: 'Verify' }).click();
-  await expect(page.getByText(/valid/i)).toBeVisible();
+  await expect(page.getByText('JWT Pizza - valid')).toBeVisible();
 });
 
 test('delivery verify shows invalid jwt on error', async ({ page }) => {
