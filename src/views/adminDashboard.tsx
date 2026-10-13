@@ -27,8 +27,11 @@ export default function AdminDashboard(props: Props) {
     (async () => {
       if (Role.isRole(props.user, Role.Admin)) {
         setFranchiseList(await pizzaService.getFranchises(franchisePage, 3, '*'));
-        // === NEW: load users ===
-        const nameFilter = filterUserRef.current?.value ? `*${filterUserRef.current.value}*` : '*';
+
+        const nameFilter = filterUserRef.current?.value 
+          ? `*${filterUserRef.current.value}*` 
+          : '*';
+
         setUserList(await pizzaService.getUsers(userPage, 10, nameFilter));
       }
     })();
@@ -51,8 +54,13 @@ export default function AdminDashboard(props: Props) {
   }
 
   async function filterUsers() {
-    const nameFilter = filterUserRef.current?.value ? `*${filterUserRef.current.value}*` : '*';
-    setUserList(await pizzaService.getUsers(userPage, 10, nameFilter));
+    const nameFilter = filterUserRef.current?.value 
+      ? `*${filterUserRef.current.value}*` 
+      : '*';
+
+    setUserPage(0);
+    const result = await pizzaService.getUsers(0, 10, nameFilter);
+    setUserList(result);
   }
 
   let response = <NotFound />;
