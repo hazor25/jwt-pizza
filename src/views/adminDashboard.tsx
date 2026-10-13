@@ -53,6 +53,24 @@ export default function AdminDashboard(props: Props) {
     setFranchiseList(await pizzaService.getFranchises(franchisePage, 10, `*${filterFranchiseRef.current?.value}*`));
   }
 
+  async function deleteUser(userToDelete: any) {
+    if (!window.confirm(`Are you sure you want to delete user "${userToDelete.name}"?`)) {
+      return;
+    }
+
+    try {
+      await pizzaService.deleteUser(userToDelete.id);
+
+      // Refresh the users list
+      const nameFilter = filterUserRef.current?.value 
+        ? `*${filterUserRef.current.value}*` 
+        : '*';
+      setUserList(await pizzaService.getUsers(userPage, 10, nameFilter));
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete user');
+    }
+  }
+
   async function filterUsers() {
     const nameFilter = filterUserRef.current?.value 
       ? `*${filterUserRef.current.value}*` 
@@ -156,7 +174,7 @@ export default function AdminDashboard(props: Props) {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="uppercase text-neutral-100 bg-slate-400 border-b-2 border-gray-500">
                         <tr>
-                          {['Name', 'Email', 'Roles'].map((header) => (
+                          {['Name', 'Email', 'Roles', 'Action'].map((header) => (
                             <th key={header} scope="col" className="px-6 py-3 text-center text-xs font-medium">
                               {header}
                             </th>
@@ -165,14 +183,24 @@ export default function AdminDashboard(props: Props) {
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {userList.users.map((u, index) => (
-                          <tr key={index}>
-                            <td className="px-6 py-3 text-sm text-gray-800">{u.name}</td>
-                            <td className="px-6 py-3 text-sm text-gray-800">{u.email}</td>
-                            <td className="px-6 py-3 text-sm text-gray-800">
-                              {u.roles?.map((r: any) => r.role).join(', ')}
-                            </td>
-                          </tr>
-                        ))}
+                        <tr key={index}>
+                          <td className="px-6 py-3 text-sm text-gray-800">{u.name}</td>
+                          <td className="px-6 py-3 text-sm text-gray-800">{u.email}</td>
+                          <td className="px-6 py-3 text-sm text-gray-800">
+                            {u.roles?.map((r: any) => r.role).join(', ')}
+                          </td>
+                          <td className="px-6 py-3 text-sm text-end">
+                            <button
+                              type="button"
+                              onClick={() => deleteUser(u)}
+                              className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400 hover:border-orange-800 hover:text-orange-800"
+                            >
+                              <TrashIcon />
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                       </tbody>
                       <tfoot>
                         <tr>
