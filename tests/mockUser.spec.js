@@ -1,6 +1,6 @@
-import { test, expect, Page } from 'playwright-test-coverage';
+import { test, expect } from 'playwright-test-coverage';
 
-async function setupMocks(page: Page) {
+async function setupMocks(page) {
   
   await page.route('**/api/**', async (route) => {
     const url = route.request().url();
@@ -90,7 +90,7 @@ async function setupMocks(page: Page) {
 
 
 
-async function registerDiner(page: Page, name: string, email: string, password: string) {
+async function registerDiner(page, name, email, password) {
   await page.goto('/');
   await page.getByRole('link', { name: 'Register' }).click();
   await page.getByRole('textbox', { name: 'Full name' }).fill(name);
@@ -99,14 +99,14 @@ async function registerDiner(page: Page, name: string, email: string, password: 
   await page.getByRole('button', { name: 'Register' }).click();
 }
 
-async function login(page: Page, email: string, password: string) {
+async function login(page, email, password) {
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Email address' }).fill(email);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Login' }).click();
 }
 
-async function loginAdmin(page: Page) {
+async function loginAdmin(page) {
   await page.goto('/');
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
@@ -114,17 +114,17 @@ async function loginAdmin(page: Page) {
   await page.getByRole('button', { name: 'Login' }).click();
 }
 
-async function logout(page: Page) {
+async function logout(page) {
   await page.getByRole('link', { name: 'Logout' }).click();
 }
 
-async function openEditDialog(page: Page) {
+async function openEditDialog(page) {
   await page.getByRole('link', { name: 'pd' }).click();
   await page.getByRole('button', { name: 'Edit' }).click();
   await expect(page.locator('h3')).toContainText('Edit user');
 }
 
-async function submitEditDialog(page: Page) {
+async function submitEditDialog(page) {
   const dialog = page.getByRole('dialog');
   await page.getByRole('button', { name: 'Update' }).click();
   await expect(dialog).not.toBeVisible();
