@@ -45,6 +45,7 @@ test('update user name', async ({ page }) => {
   const password = 'diner';
 
   await registerDiner(page, 'pizza diner', email, password);
+  await expect(page.getByRole('main')).toContainText('best pizza');
 
   await openEditDialog(page);
   await page.getByRole('textbox').nth(0).fill('pizza dinerx');
