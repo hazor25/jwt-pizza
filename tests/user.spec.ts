@@ -16,6 +16,14 @@ async function login(page: Page, email: string, password: string) {
   await page.getByRole('button', { name: 'Login' }).click();
 }
 
+async function loginAdmin(page: Page) {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin');
+  await page.getByRole('button', { name: 'Login' }).click();
+}
+
 async function logout(page: Page) {
   await page.getByRole('link', { name: 'Logout' }).click();
 }
@@ -112,4 +120,57 @@ test('update multiple user fields', async ({ page }) => {
 
   await expect(page.getByRole('main')).toContainText(newName);
   await expect(page.getByRole('main')).toContainText(newEmail);
+});
+
+
+
+test('admin can see users list', async ({ page }) => {
+  await loginAdmin(page);
+
+  await page.getByRole('link', { name: 'Admin' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
+
+  await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Email' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Roles' })).toBeVisible();
+
+  const rows = page.locator('tbody tr');
+  await expect(rows.first()).toBeVisible();
+});
+
+test('admin can filter users by name', async ({ page }) => {
+  await loginAdmin(page);
+  await page.getByRole('link', { name: 'Admin' }).click();
+
+  const userFilter = page.getByPlaceholder('Filter users');
+  await userFilter.fill('常用');
+  await page.getByRole('button', { name: 'Submit' }).nth(1).click();
+
+  await expect(page.getByText('常用名字')).toBeVisible();
+});
+
+test('admin users list supports pagination', async ({ page }) => {
+  await loginAdmin(page);
+  await page.getByRole('link', { name: 'Admin' }).click();
+
+  const nextButton = page.getByRole('button', { name: '»' }).nth(1); // second » button = users
+  await expect(nextButton).toBeVisible();
+
+  if (await nextButton.isEnabled()) {
+    await nextButton.click();
+    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
+  }
+});
+
+test('non-admin cannot see users list', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('diner');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await page.goto('/admin-dashboard');
+
+  await expect(page.getByText('It looks like we have dropped a pizza on the floor')).toBeVisible();
 });
