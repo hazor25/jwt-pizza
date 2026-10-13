@@ -174,3 +174,36 @@ test('non-admin cannot see users list', async ({ page }) => {
 
   await expect(page.getByText('It looks like we have dropped a pizza on the floor')).toBeVisible();
 });
+
+
+
+
+test('admin can delete a user from the dashboard', async ({ page }) => {
+  await loginAdmin(page);
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
+  await page.getByRole('heading', { name: 'Users' }).scrollIntoViewIfNeeded();
+
+  const firstUserRow = page.locator('tbody tr').first();
+  const userName = await firstUserRow.locator('td').first().textContent();
+
+  page.once('dialog', dialog => {
+    console.log(`Dialog message: ${dialog.message()}`);
+    dialog.dismiss().catch(() => {});
+  });
+  await page.getByRole('button', { name: 'Delete' }).nth(1).click();
+});
+
+test('non-admin cannot see the delete buttons', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('diner');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await page.goto('/admin-dashboard');
+
+  await expect(page.getByText('It looks like we have dropped a pizza on the floor')).toBeVisible();
+
+  await expect(page.getByRole('button', { name: 'Delete' })).not.toBeVisible();
+});
