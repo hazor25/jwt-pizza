@@ -33,7 +33,6 @@ export default function DinerDashboard(props: Props) {
 
 
   async function updateUser() {
-    console.log('updating user');
     let updatedUser: User = {
       id: user.id,
       name: nameRef.current?.value,
@@ -41,7 +40,8 @@ export default function DinerDashboard(props: Props) {
       password: passwordRef.current?.value || undefined,
       roles: user.roles,
     };
-    console.log('updatedUser', updatedUser);
+
+    await pizzaService.updateUser(updatedUser);
 
     props.setUser(updatedUser);
     setTimeout(() => {
