@@ -6,7 +6,6 @@ coverage
 dist
 **/.vite
 
-tests/integratedUser.spec.js
 
 # Playwright
 node_modules/
