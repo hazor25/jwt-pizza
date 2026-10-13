@@ -8,8 +8,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "playwright test",
-    "test:coverage": "nyc --reporter=json-summary --reporter=text playwright test --reporter=line"
+    "test": "playwright test tests/required",
+    "test:integration": "playwright test tests/integration",
+    "test:all": "playwright test",
+    "test:coverage": "nyc --reporter=json-summary --reporter=text playwright test tests/required --reporter=line"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
