@@ -49,3 +49,67 @@ test('update user name', async ({ page }) => {
 
   await expect(page.getByRole('main')).toContainText('pizza dinerx');
 });
+
+test('update user email', async ({ page }) => {
+  const oldEmail = `user${Math.floor(Math.random() * 10000)}@jwt.com`;
+  const newEmail = `updated${Math.floor(Math.random() * 10000)}@jwt.com`;
+  const password = 'diner';
+
+  await registerDiner(page, 'pizza diner', oldEmail, password);
+
+  await openEditDialog(page);
+  await page.getByRole('textbox').nth(1).fill(newEmail);
+  await submitEditDialog(page);
+
+  await expect(page.getByRole('main')).toContainText(newEmail);
+
+  await logout(page);
+  await login(page, newEmail, password);
+  await page.getByRole('link', { name: 'pd' }).click();
+
+  await expect(page.getByRole('main')).toContainText(newEmail);
+});
+
+test('update user password', async ({ page }) => {
+  const email = `user${Math.floor(Math.random() * 10000)}@jwt.com`;
+  const oldPassword = 'diner';
+  const newPassword = 'dinerx';
+
+  await registerDiner(page, 'pizza diner', email, oldPassword);
+
+  await openEditDialog(page);
+  await page.getByRole('textbox').nth(2).fill(newPassword);
+  await submitEditDialog(page);
+
+  await logout(page);
+  await login(page, email, newPassword);
+  await page.getByRole('link', { name: 'pd' }).click();
+
+  await expect(page.getByRole('main')).toContainText('pizza diner');
+});
+
+test('update multiple user fields', async ({ page }) => {
+  const oldEmail = `user${Math.floor(Math.random() * 10000)}@jwt.com`;
+  const newEmail = `updated${Math.floor(Math.random() * 10000)}@jwt.com`;
+  const oldPassword = 'diner';
+  const newPassword = 'dinerx';
+  const newName = 'pizza diner updated';
+
+  await registerDiner(page, 'pizza diner', oldEmail, oldPassword);
+
+  await openEditDialog(page);
+  await page.getByRole('textbox').nth(0).fill(newName);
+  await page.getByRole('textbox').nth(1).fill(newEmail);
+  await page.getByRole('textbox').nth(2).fill(newPassword);
+  await submitEditDialog(page);
+
+  await expect(page.getByRole('main')).toContainText(newName);
+  await expect(page.getByRole('main')).toContainText(newEmail);
+
+  await logout(page);
+  await login(page, newEmail, newPassword);
+  await page.getByRole('link', { name: 'pu' }).click();
+
+  await expect(page.getByRole('main')).toContainText(newName);
+  await expect(page.getByRole('main')).toContainText(newEmail);
+});
