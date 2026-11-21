@@ -164,11 +164,19 @@ export function scenario_1() {
         },
       }
     )
+
+    if (!check(response, { 'order status equals 200': (r) => r.status === 200 })) {
+      console.log(response.body);
+      fail('Order was *not* 200');
+    }
+
+    vars['pizzaJwt'] = jsonpath.query(response.json(), '$.jwt')[0]
+
     sleep(1.2)
 
     response = http.post(
       'https://pizza-factory.cs329.click/api/order/verify',
-      '{"jwt":"eyJpYXQiOjE3OTUyMjMxMjQsImV4cCI6MTc5NTMwOTUyNCwiaXNzIjoiY3MzMjkuY2xpY2siLCJhbGciOiJSUzI1NiIsImtpZCI6Ik9TcF94VzhlM3kwNk1KS3ZIeW9sRFZMaXZXX2hnTWxhcFZSUVFQVndiY0UifQ.eyJ2ZW5kb3IiOnsiaWQiOiJoYXpvcjI1IiwibmFtZSI6Ikx1aXMifSwiZGluZXIiOnsiaWQiOjQsIm5hbWUiOiJ0ZXN0IHVzZXIiLCJlbWFpbCI6InRlc3RAand0LmNvbSJ9LCJvcmRlciI6eyJpdGVtcyI6W3sibWVudUlkIjoxLCJkZXNjcmlwdGlvbiI6IlZlZ2dpZSIsInByaWNlIjowLjAwMzh9XSwic3RvcmVJZCI6IjEiLCJmcmFuY2hpc2VJZCI6MSwiaWQiOjI4MH19.ReBD9IVNx7mcjB4VtcBtBvVTk-FvM2lKau46palmggi7g7syT6gSf8zxZ5hJYyDZ2EAwqUH9giwBDe30kbzouPELNjFRHirNZoiF6qkWRe86ZtXMoVPCDPqBv_d3L4nRy9ToMolu-KjDiNka7hMe8tj37YT3GRLO2ZjMD4hbxZ5JiOkcqPrzzuyqs2sOkUEWhB8VJbMQiB28HSaYhsLd1ZzMv4g_Z-qT0syFEdNe5qxwvV2wLcMitnAgMG9Dvcuwz5C4TStaz3lxHfxqnpkSAfmq8M7UMbRx_CY8TUf4ljN11VbZUJrHjxa_7XvxP7v7GwMqYXlX1J3XOF3xhHMsazDYO5cw7B8yP0ziFldQzLYC5Wi_rseVZXn99m9loaKI-OkqPEB0ye4FNb_jCczyMmxK3oHgsaNFD5J-aDG-gGUhKsAZ1cwsXqqVumQcjCs1A8J0MwJcfIC3JB3qsh2gZuXQSD8saptYSNMZpXVWyubn81NIgeaty0UBjFs9OqHsb9Knl62C2n03ZXwh9gx_wKYO-eAcUVE7XGmpg_IvtM1QXfKsrWMkIzamnPshrS1nW3uuryTYcineKwsoZ7FtXIeOQGSh5CgLyvJo6jbNEMwOHZb-YgzCIiH-Bi3VYuVC7bg3-JZbGsxoSkSDTQNl0EkGJqJ27-Q4DnERuV_y0Mk"}',
+      JSON.stringify({ jwt: vars['pizzaJwt'] }),
       {
         headers: {
           accept: '*/*',
